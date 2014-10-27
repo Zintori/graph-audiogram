@@ -1,0 +1,9 @@
+<resources>
+   <declare-styleable name="GraphView">
+       <attr name="showText" format="boolean" />
+       <attr name="labelPosition" format="enum">
+           <enum name="low" value="0"/>
+           <enum name="high" value="1"/>
+       </attr>
+   </declare-styleable>
+</resources>
