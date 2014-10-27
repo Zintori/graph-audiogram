@@ -19,17 +19,23 @@ public class GraphView extends View{
     private static final int MAX_LINES = 14;
     private static final int[] DISTANCES = { 10 };
     
-	private float[] datapoints;
+	private float[] leftDatapoints;
+	private float[] rightDatapoints;
 	private Paint paint = new Paint();
 	private Path path = new Path();
-	private Bitmap b;
+	private Bitmap leftMarker;
+	private Bitmap rightMarker;
+	
 	
 	public GraphView (Context context, AttributeSet attrs) {
         super(context, attrs);
-        b = BitmapFactory.decodeResource(getResources(),
+        leftMarker = BitmapFactory.decodeResource(getResources(),
+				R.drawable.blue_cross);
+        rightMarker = BitmapFactory.decodeResource(getResources(),
 				R.drawable.red_circle);
-        float[] datapoints = { (float) 35, (float) 40, (float) 40, (float) 60, (float) 65, (float) 70, (float) 90, (float)100};
-        setChartData(datapoints);
+        float[] leftDatapoints = { (float) 15, (float) 10, (float) 15, (float) 15, (float) 20, (float) 20, (float) 15, (float) 15};
+        float[] rightDatapoints = { (float) 35, (float) 40, (float) 40, (float) 60, (float) 65, (float) 70, (float) 90, (float) 100};
+        setChartData(leftDatapoints, rightDatapoints);
     }
 	
 	public float getScreenDensityRatio() {
@@ -38,25 +44,40 @@ public class GraphView extends View{
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		float maxValue = getMax(datapoints);
-	    path.moveTo(getXPos(0), getYPos(datapoints[0], maxValue));
-	    canvas.drawBitmap(b, getXPos(0)-(5*getScreenDensityRatio()), getYPos(datapoints[0], maxValue), paint);
-	    for (int i = 1; i<datapoints.length; i++) {
-	        path.lineTo(getXPos(i), getYPos(datapoints[i], maxValue));
-	        canvas.drawBitmap(b, getXPos(i)-10, getYPos(datapoints[i]-1, maxValue), paint);
+		float maxValue = getMax(leftDatapoints);
+		
+		// draw left data points and path
+	    path.moveTo(getXPos(0), getYPos(leftDatapoints[0], maxValue));
+	    canvas.drawBitmap(leftMarker, getXPos(0)-(5*getScreenDensityRatio()), getYPos(leftDatapoints[0], maxValue), paint);
+	    for (int i = 1; i<leftDatapoints.length; i++) {
+	        path.lineTo(getXPos(i), getYPos(leftDatapoints[i], maxValue));
+	        canvas.drawBitmap(leftMarker, getXPos(i)-10, getYPos(leftDatapoints[i]-1, maxValue), paint);
 	    }
 	    
 		paint.setStyle(Style.STROKE);
-		paint.setColor(0xFF33B5E5);
-		paint.setStrokeWidth(4);
+		paint.setColor(0xFF666666);
+		paint.setStrokeWidth(3);
 		paint.setAntiAlias(true);
-		paint.setShadowLayer(4, 2, 3, 0x80000000);
+		paint.setShadowLayer(2, 1, 1, 0x80000000);
 		//int left = getPaddingLeft();
 	    //int top = getPaddingTop();
 	    //int right = getWidth() - getPaddingRight();
 	    //int bottom = getHeight() - getPaddingBottom();
 	    //canvas.drawLine(left, top, right, bottom, paint);
 		canvas.drawPath(path, paint);
+		
+		// draw right data points and path
+	    path.moveTo(getXPos(0), getYPos(rightDatapoints[0], maxValue));
+	    canvas.drawBitmap(rightMarker, getXPos(0)-(5*getScreenDensityRatio()), getYPos(rightDatapoints[0], maxValue), paint);
+	
+	    for (int i = 1; i<rightDatapoints.length; i++) {
+	        path.lineTo(getXPos(i), getYPos(rightDatapoints[i], maxValue));
+	        canvas.drawBitmap(rightMarker, getXPos(i)-10, getYPos(rightDatapoints[i]-1, maxValue), paint);
+	    }
+	    
+	    canvas.drawPath(path, paint);
+	    
+		// draw grid and background
 		drawBackground(canvas, maxValue);
 
 	}
@@ -115,7 +136,7 @@ public class GraphView extends View{
 	/* helper method */
 	 private float getXPos(float value) {
 	    float width = getWidth() - getPaddingLeft() - getPaddingRight();
-	    float maxValue = datapoints.length - 1;
+	    float maxValue = leftDatapoints.length - 1;
 
 	    // scale it to the view size
 	    value = (value / maxValue) * width;
@@ -124,8 +145,9 @@ public class GraphView extends View{
 	    return value;
 	}
 	
-	public void setChartData(float[] datapoints) {
-		this.datapoints = datapoints.clone();
+	public void setChartData(float[] leftDatapoints, float[] rightDatapoints) {
+		this.leftDatapoints = leftDatapoints.clone();
+		this.rightDatapoints = rightDatapoints.clone();
 	}
 	
 	public void setShowText(boolean showText) {
