@@ -25,14 +25,22 @@ public class GraphView extends View{
 	private Path path = new Path();
 	private Bitmap leftMarker;
 	private Bitmap rightMarker;
-	
+	int leftBitmapWidth;
+	int leftBitmapHeight;
+	int rightBitmapWidth;
+	int rightBitmapHeight;
 	
 	public GraphView (Context context, AttributeSet attrs) {
         super(context, attrs);
+        //(R.drawable.banana);
         leftMarker = BitmapFactory.decodeResource(getResources(),
 				R.drawable.blue_cross);
         rightMarker = BitmapFactory.decodeResource(getResources(),
 				R.drawable.red_circle);
+        leftBitmapWidth = leftMarker.getWidth();
+        rightBitmapWidth = rightMarker.getWidth();
+        leftBitmapHeight = leftMarker.getHeight();
+        rightBitmapHeight = rightMarker.getHeight();
         float[] leftDatapoints = { (float) 15, (float) 10, (float) 15, (float) 15, (float) 20, (float) 20, (float) 15, (float) 15};
         float[] rightDatapoints = { (float) 35, (float) 40, (float) 40, (float) 60, (float) 65, (float) 70, (float) 90, (float) 100};
         setChartData(leftDatapoints, rightDatapoints);
@@ -48,10 +56,10 @@ public class GraphView extends View{
 		
 		// draw left data points and path
 	    path.moveTo(getXPos(0), getYPos(leftDatapoints[0], maxValue));
-	    canvas.drawBitmap(leftMarker, getXPos(0)-(5*getScreenDensityRatio()), getYPos(leftDatapoints[0], maxValue), paint);
+	    canvas.drawBitmap(leftMarker, getXPos(0)-(leftBitmapWidth/2), getYPos(leftDatapoints[0], maxValue)-(leftBitmapHeight/2), paint);
 	    for (int i = 1; i<leftDatapoints.length; i++) {
 	        path.lineTo(getXPos(i), getYPos(leftDatapoints[i], maxValue));
-	        canvas.drawBitmap(leftMarker, getXPos(i)-10, getYPos(leftDatapoints[i]-1, maxValue), paint);
+	        canvas.drawBitmap(leftMarker, getXPos(i)-(leftBitmapWidth/2), getYPos(leftDatapoints[i], maxValue)-(leftBitmapHeight/2), paint);
 	    }
 	    
 		paint.setStyle(Style.STROKE);
@@ -59,20 +67,15 @@ public class GraphView extends View{
 		paint.setStrokeWidth(3);
 		paint.setAntiAlias(true);
 		paint.setShadowLayer(2, 1, 1, 0x80000000);
-		//int left = getPaddingLeft();
-	    //int top = getPaddingTop();
-	    //int right = getWidth() - getPaddingRight();
-	    //int bottom = getHeight() - getPaddingBottom();
-	    //canvas.drawLine(left, top, right, bottom, paint);
 		canvas.drawPath(path, paint);
 		
 		// draw right data points and path
 	    path.moveTo(getXPos(0), getYPos(rightDatapoints[0], maxValue));
-	    canvas.drawBitmap(rightMarker, getXPos(0)-(5*getScreenDensityRatio()), getYPos(rightDatapoints[0], maxValue), paint);
+	    canvas.drawBitmap(rightMarker, getXPos(0)-(rightBitmapWidth/2), getYPos(rightDatapoints[0], maxValue)-(rightBitmapHeight/2), paint);
 	
 	    for (int i = 1; i<rightDatapoints.length; i++) {
 	        path.lineTo(getXPos(i), getYPos(rightDatapoints[i], maxValue));
-	        canvas.drawBitmap(rightMarker, getXPos(i)-10, getYPos(rightDatapoints[i]-1, maxValue), paint);
+	        canvas.drawBitmap(rightMarker, getXPos(i)-(rightBitmapWidth/2), getYPos(rightDatapoints[i]-1, maxValue)-(rightBitmapHeight/2), paint);
 	    }
 	    
 	    canvas.drawPath(path, paint);
