@@ -19,8 +19,7 @@ public class GraphView extends View{
     private static final int MAX_LINES = 14;
     private static final int[] DISTANCES = { 10 };
     
-	private float[] leftDatapoints;
-	private float[] rightDatapoints;
+	private DataModel dm;
 	private Paint paint = new Paint();
 	private Path path = new Path();
 	private Bitmap leftMarker;
@@ -32,7 +31,6 @@ public class GraphView extends View{
 	
 	public GraphView (Context context, AttributeSet attrs) {
         super(context, attrs);
-        //(R.drawable.banana);
         leftMarker = BitmapFactory.decodeResource(getResources(),
 				R.drawable.blue_cross);
         rightMarker = BitmapFactory.decodeResource(getResources(),
@@ -41,9 +39,7 @@ public class GraphView extends View{
         rightBitmapWidth = rightMarker.getWidth();
         leftBitmapHeight = leftMarker.getHeight();
         rightBitmapHeight = rightMarker.getHeight();
-        float[] leftDatapoints = { (float) 15, (float) 10, (float) 15, (float) 15, (float) 20, (float) 20, (float) 15, (float) 15};
-        float[] rightDatapoints = { (float) 35, (float) 40, (float) 40, (float) 60, (float) 65, (float) 70, (float) 90, (float) 100};
-        setChartData(leftDatapoints, rightDatapoints);
+        dm = new DataModel();
     }
 	
 	public float getScreenDensityRatio() {
@@ -52,14 +48,14 @@ public class GraphView extends View{
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		float maxValue = getMax(leftDatapoints);
+		float maxValue = getMax(dm.getLeftDataPoints());
 		
 		// draw left data points and path
-	    path.moveTo(getXPos(0), getYPos(leftDatapoints[0], maxValue));
-	    canvas.drawBitmap(leftMarker, getXPos(0)-(leftBitmapWidth/2), getYPos(leftDatapoints[0], maxValue)-(leftBitmapHeight/2), paint);
-	    for (int i = 1; i<leftDatapoints.length; i++) {
-	        path.lineTo(getXPos(i), getYPos(leftDatapoints[i], maxValue));
-	        canvas.drawBitmap(leftMarker, getXPos(i)-(leftBitmapWidth/2), getYPos(leftDatapoints[i], maxValue)-(leftBitmapHeight/2), paint);
+	    path.moveTo(getXPos(0), getYPos(dm.getLeftDataPoints()[0], maxValue));
+	    canvas.drawBitmap(leftMarker, getXPos(0)-(leftBitmapWidth/2), getYPos(dm.getLeftDataPoints()[0], maxValue)-(leftBitmapHeight/2), paint);
+	    for (int i = 1; i<dm.getLeftDataPoints().length; i++) {
+	        path.lineTo(getXPos(i), getYPos(dm.getLeftDataPoints()[i], maxValue));
+	        canvas.drawBitmap(leftMarker, getXPos(i)-(leftBitmapWidth/2), getYPos(dm.getLeftDataPoints()[i], maxValue)-(leftBitmapHeight/2), paint);
 	    }
 	    
 		paint.setStyle(Style.STROKE);
@@ -70,12 +66,12 @@ public class GraphView extends View{
 		canvas.drawPath(path, paint);
 		
 		// draw right data points and path
-	    path.moveTo(getXPos(0), getYPos(rightDatapoints[0], maxValue));
-	    canvas.drawBitmap(rightMarker, getXPos(0)-(rightBitmapWidth/2), getYPos(rightDatapoints[0], maxValue)-(rightBitmapHeight/2), paint);
+	    path.moveTo(getXPos(0), getYPos(dm.getRightDataPoints()[0], maxValue));
+	    canvas.drawBitmap(rightMarker, getXPos(0)-(rightBitmapWidth/2), getYPos(dm.getRightDataPoints()[0], maxValue)-(rightBitmapHeight/2), paint);
 	
-	    for (int i = 1; i<rightDatapoints.length; i++) {
-	        path.lineTo(getXPos(i), getYPos(rightDatapoints[i], maxValue));
-	        canvas.drawBitmap(rightMarker, getXPos(i)-(rightBitmapWidth/2), getYPos(rightDatapoints[i]-1, maxValue)-(rightBitmapHeight/2), paint);
+	    for (int i = 1; i<dm.getRightDataPoints().length; i++) {
+	        path.lineTo(getXPos(i), getYPos(dm.getRightDataPoints()[i], maxValue));
+	        canvas.drawBitmap(rightMarker, getXPos(i)-(rightBitmapWidth/2), getYPos(dm.getRightDataPoints()[i], maxValue)-(rightBitmapHeight/2), paint);
 	    }
 	    
 	    canvas.drawPath(path, paint);
@@ -139,18 +135,13 @@ public class GraphView extends View{
 	/* helper method */
 	 private float getXPos(float value) {
 	    float width = getWidth() - getPaddingLeft() - getPaddingRight();
-	    float maxValue = leftDatapoints.length - 1;
+	    float maxValue = dm.getLeftDataPoints().length - 1;
 
 	    // scale it to the view size
 	    value = (value / maxValue) * width;
 	    // offset it to adjust for padding
 	    value += getPaddingLeft();
 	    return value;
-	}
-	
-	public void setChartData(float[] leftDatapoints, float[] rightDatapoints) {
-		this.leftDatapoints = leftDatapoints.clone();
-		this.rightDatapoints = rightDatapoints.clone();
 	}
 	
 	public void setShowText(boolean showText) {

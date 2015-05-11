@@ -28,3 +28,9 @@ bin/res/crunch/drawable-hdpi/blue_cross.png
 bin/res/crunch/drawable-xhdpi/banana.png
 gen/android/support/v7/appcompat/R.java
 gen/com/zintori/graphchartlibrary/R.java
+bin/res/crunch/drawable-hdpi/alert_compass_blue.png
+bin/res/crunch/drawable-hdpi/ic_launcher.png
+bin/res/crunch/drawable-hdpi/red_circle.png
+bin/res/crunch/drawable-mdpi/ic_launcher.png
+bin/res/crunch/drawable-xhdpi/ic_launcher.png
+bin/res/crunch/drawable-xxhdpi/ic_launcher.png
